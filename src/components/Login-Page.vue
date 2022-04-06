@@ -14,7 +14,10 @@
                         </div>
                     </div>
                         
-                    <button type="button" class="btn btn-dark" @click="login()">Login</button>
+                    <button type="button" @click="login()">
+						<span v-show="!loading">Login</span>
+						<span v-show="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+					</button>
                 </form>
             </div>
         </div>
@@ -28,6 +31,7 @@ export default {
 		return {
 			identity: "",
 			password: "",
+			loading: false
 		};
 	},
 	computed: {
@@ -44,11 +48,16 @@ export default {
 				identity: this.identity,
 				password: this.password,
 			};
-			await this.actionLoginApi(payload);
-			if(this.getLoginApiStatus == "success"){
-				this.$router.replace("/dashboard");
-			}else{
-				alert("failed")
+			if(payload.identity !== "" && payload.password !== ""){
+				this.loading = true;
+				await this.actionLoginApi(payload);
+				if(this.getLoginApiStatus == "success"){
+					this.loading = false;
+					this.$router.replace("/dashboard");
+				}else{
+					alert("failed")
+					this.loading = false;
+				}
 			}
 		},
 	},

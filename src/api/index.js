@@ -6,6 +6,7 @@ const api = axios.create({
   // eslint-disable-next-line no-undef
   baseURL: "http://localhost:8000/api",
   withCredentials: true,
+  credentials: 'include'
 });
 
 export default api;
