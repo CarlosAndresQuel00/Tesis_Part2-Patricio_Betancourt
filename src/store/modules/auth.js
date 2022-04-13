@@ -1,5 +1,6 @@
 import api from '../../api/index';
-import jwtInterceptor from '../../shared/jwt.interceptor';
+import jwtInterceptor from '../../shared/jwtInterceptor';
+import cookie from 'js-cookie'
 
 const state = () => ({
     loginApiStatus: "",
@@ -27,7 +28,9 @@ const actions = {
         const response = await api.post('/login', payload);
         if (response.data.token) {
             commit("setLoginApiStatus", "success");
-            localStorage.setItem("isAuthenticated", true);
+            cookie.set("isAuthenticated", true);
+            cookie.set("userIdentity", payload.identity);
+            cookie.set("userPassword", payload.password);
         } else {
             commit("setLoginApiStatus", "failed");
         }
@@ -42,7 +45,9 @@ const actions = {
         const response = await api.post('/logout')
         if(response && response.data){
             commit("setLogout", true)
-            localStorage.removeItem("isAuthenticated");
+            cookie.remove("isAuthenticated");
+            cookie.remove("userIdentity");
+            cookie.remove("userPassword");
         }
         else{
             commit("setLogout", false)
